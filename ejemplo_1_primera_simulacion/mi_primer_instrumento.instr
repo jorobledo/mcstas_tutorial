@@ -1,0 +1,30 @@
+DEFINE INSTRUMENT mi_primer_instrumento(DIST=10)
+
+/* Primero hay una sección de declaraciones */
+DECLARE
+%{
+    /* Vacía por el momento*/
+%}
+
+/* Luego una sección de inicialización de variables */
+INITIALIZE
+%{
+    /* Vacía por el momento*/
+%}
+
+/*
+Acá comienza la sección TRACE, en donde el instrumento 
+se declara como una secuencia de componentes
+*/
+
+TRACE
+/* Comenzamos definiendo un eje en el origen de coordenadas */
+COMPONENT Origin = Arm()
+AT (0, 0, 0) ABSOLUTE
+
+/* Luego definimos la fuente */
+COMPONENT Source = Source_simple(
+    radius = 0.1, dist = 10, xw = 0.1, yh = 0.1, E0 = 5, dE =1
+)
+AT (0, 0, 0) RELATIVE Origin
+
