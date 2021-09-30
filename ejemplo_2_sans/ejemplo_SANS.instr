@@ -27,7 +27,6 @@
 *******************************************************************************/
 
 DEFINE INSTRUMENT ejemplo_SANS(
-	
 	DistPinSamp = 1.0,
 	DistSampDet = 10.0
 )
@@ -67,19 +66,18 @@ COMPONENT Source = Source_simple(
   AT (0, 0, 0) RELATIVE Origin
 
 /* Agregamos monitor a la salida de la fuente 
-para ver qué lo que sale es lo que esperamos. */
+para ver que lo que sale es lo que esperamos. */
 COMPONENT Emon = E_monitor(
     filename = "Emon.dat", xmin = -0.05, xmax = 0.05, ymin = -0.05,
     ymax = 0.05, Emin = 0, Emax = 10, nE=30
 )
 AT (0, 0, 1e-1) RELATIVE PREVIOUS
 
-		// ------collimation------
+// ------colimación------
 
 COMPONENT FirstPinhole = Slit(
 	radius = 0.01)
   AT (0, 0, 1.0) RELATIVE Source
-
 
 COMPONENT SecondPinhole = Slit(
 	radius = 0.005)
@@ -87,21 +85,22 @@ COMPONENT SecondPinhole = Slit(
 
 /* ACÁ VA LA MUESTRA */
 /* Probamos una muestra de Guinier con el split */
+/* https://www.sasview.org/docs/user/models/guinier.html */
 SPLIT 100 COMPONENT Sample = SANS_Guinier(
 	transm=0.4, Rg=200, qmax=0.05, xwidth=0.01, yheight=0.01, zdepth=0.005
 	)
-AT (0, 0, DistSampDet) RELATIVE SecondPinhole
+AT (0, 0, DistPinSamp) RELATIVE SecondPinhole
 EXTEND
 %{
 if (SCATTERED) flag = 1; else flag = 0;
 %}
 
-		//-------removing the direct beam-------
+//-------Eliminamos el haz directo-------
 COMPONENT Beamstop = Beamstop(
 	radius = 0.07)
 AT (0, 0, DistSampDet - 0.000001) RELATIVE Sample
 
-
+/* Agregamos un monitor sensible a la posición*/
 COMPONENT Monitor = PSD_monitor(
 	filename = "PSDMonitor",
 	xwidth = 2.0 * DetRadius, 
@@ -111,9 +110,14 @@ COMPONENT Monitor = PSD_monitor(
 	restore_neutron = 1)
 AT (0, 0, 0.000001) RELATIVE Beamstop
 	
-		// Insert  the SANSQMonitor here
-
-
+/* Agregamos un monitor de Q para SANS */
+COMPONENT Monitor_Q = SANSQMonitor(
+	RadiusDetector = DetRadius,
+	DistanceFromSample = DistSampDet,
+	Lambda0 = Lambda,
+	LambdaMin = 2
+)
+AT (0, 0, DistSampDet) RELATIVE Sample
 
 FINALLY
 %{

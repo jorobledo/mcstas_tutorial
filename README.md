@@ -2,7 +2,6 @@
 
 El objetivo de este tutorial es aprender a utilizar McStas para comenzar a simular experimentos de Dispersión a Bajo Ángulo de Neutrones (SANS, del inglés *Small Angle Neutron Scattering*). 
 
-
 La página oficial de McStas es : [http://www.mcstas.org/]()
 
 ## Instalación de McStas
@@ -26,4 +25,4 @@ El instrumento que se describe en esta carpeta es de los más simples posibles. 
 
 ### 2.) SANS
 
-En este caso, se presenta un primer instrumento de SANS ideal, donde veremos cómo se pueden incluir las distintas componentes necesarias.
+En este caso, se presenta un primer instrumento de SANS ideal, donde veremos cómo se pueden incluir las distintas componentes necesarias. Se experimentará sobre una muestra definida en base a la componente ``SANS_guinier`` ([SANS_Guinier.comp](http://www.mcstas.org/download/components/2.7/contrib/SANS_Guinier.html)) , que aprovecha la existencia de una integral analítica (ver [Guinier SAS model](https://www.sasview.org/docs/user/models/guinier.html)).
