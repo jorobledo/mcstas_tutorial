@@ -1,8 +1,7 @@
 # Tutorial de McStas
+[![McStas](https://img.shields.io/badge/Software-McStas-brightgreen)](https://mcstas.org/)
 
 El objetivo de este tutorial es aprender a utilizar McStas para comenzar a simular experimentos de Dispersión a Bajo Ángulo de Neutrones (SANS, del inglés *Small Angle Neutron Scattering*). 
-
-La página oficial de McStas es : [http://www.mcstas.org/]()
 
 ## Instalación de McStas
 
