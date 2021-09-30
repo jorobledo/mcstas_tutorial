@@ -1,0 +1,127 @@
+/*******************************************************************************
+*         McStas instrument definition URL=http://www.mcstas.org
+*
+* Instrumento: SANS Basado en testSANS de Martin Cramer Pedersen
+*
+* %Identificación
+* McStas 2.7
+* Modificado por José Robledo
+* Basado en tutorial de M. C. Pedersen
+*
+* %Descripción
+* Se prueba un instrumento de SANS con una muestra de Guinier.
+* El objetivo es trabajar sobre las secciones DECLARE, INITIALIZE, y los comandos
+* SPLIT y EXTEND, además de ver un ejemplo de una simulación SANS.
+*
+* %Parameters
+* DistSrcPin1 : [m]	Distancia de la fuente al primer pibhole.
+* DistSrcPin2 : [m] Distancia de la fuente al segundo pinhole.
+* DistPinSamp : [m]	Longitud de colimación (pinhole, muestra).
+* DistSampDet : [m]	Distanca entre la muestra y el detector.
+* DetRadius   : [m]	Radio del detector circular.
+* Lambda      : [AA] Longitud de onda de los neutrones emitidos por la fuente.
+* DLambda     : [AA] desvición relativa en longitud de onda de los neutrones 
+*					 emitidos por la fuente.
+*
+* %End
+*******************************************************************************/
+
+DEFINE INSTRUMENT ejemplo_SANS(
+	
+	DistPinSamp = 1.0,
+	DistSampDet = 10.0
+)
+
+
+DECLARE
+%{
+	double Lambda=4.5;
+	double dLambda=0.1;
+	double DetRadius=1.0;
+	double Energy;
+	int flag;
+%}
+
+
+INITIALIZE
+%{
+	/* Ejemplo de lo que se puede hacer en INITIALIZE*/
+	Energy = 81.82 / pow(Lambda, 2); // Angstrom a electron volt
+	printf("La energia media de los neutrones es: %lf meV \n", Energy);
+%}
+
+
+TRACE
+COMPONENT Origin = Progress_bar()
+AT (0, 0, 0) ABSOLUTE
+
+/* Una fuente simple imitando la salida del selector de velocidades */
+COMPONENT Source = Source_simple(
+	radius = 0.02,
+	dist = 1.0, 
+	yheight = 0.01, 
+	xwidth = 0.01,
+	focus_xw=0.01, focus_yh=0.01,
+	lambda0 = Lambda, 
+	dlambda = dLambda * Lambda)
+  AT (0, 0, 0) RELATIVE Origin
+
+/* Agregamos monitor a la salida de la fuente 
+para ver qué lo que sale es lo que esperamos. */
+COMPONENT Emon = E_monitor(
+    filename = "Emon.dat", xmin = -0.05, xmax = 0.05, ymin = -0.05,
+    ymax = 0.05, Emin = 0, Emax = 10, nE=30
+)
+AT (0, 0, 1e-1) RELATIVE PREVIOUS
+
+		// ------collimation------
+
+COMPONENT FirstPinhole = Slit(
+	radius = 0.01)
+  AT (0, 0, 1.0) RELATIVE Source
+
+
+COMPONENT SecondPinhole = Slit(
+	radius = 0.005)
+  AT (0, 0, 10.0) RELATIVE Source
+
+/* ACÁ VA LA MUESTRA */
+/* Probamos una muestra de Guinier con el split */
+SPLIT 100 COMPONENT Sample = SANS_Guinier(
+	transm=0.4, Rg=200, qmax=0.05, xwidth=0.01, yheight=0.01, zdepth=0.005
+	)
+AT (0, 0, DistSampDet) RELATIVE SecondPinhole
+EXTEND
+%{
+if (SCATTERED) flag = 1; else flag = 0;
+%}
+
+		//-------removing the direct beam-------
+COMPONENT Beamstop = Beamstop(
+	radius = 0.07)
+AT (0, 0, DistSampDet - 0.000001) RELATIVE Sample
+
+
+COMPONENT Monitor = PSD_monitor(
+	filename = "PSDMonitor",
+	xwidth = 2.0 * DetRadius, 
+	yheight = 2.0 * DetRadius,
+	nx = 200,
+	ny = 200,
+	restore_neutron = 1)
+AT (0, 0, 0.000001) RELATIVE Beamstop
+	
+		// Insert  the SANSQMonitor here
+
+
+
+FINALLY
+%{
+%}
+
+END
+
+
+
+
+
