@@ -24,7 +24,9 @@ AT (0, 0, 0) ABSOLUTE
 
 /* Luego definimos la fuente */
 COMPONENT Source = Source_simple(
-    radius = 0.1, dist = 10, xw = 0.1, yh = 0.1, E0 = 5, dE =1
+    radius = 0.1, dist = 10, xwidth = 0.1, yheight = 0.1, E0 = 5, dE =1,
+    focus_xw=.1, focus_yh=.1
 )
 AT (0, 0, 0) RELATIVE Origin
 
+END
