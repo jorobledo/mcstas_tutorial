@@ -25,14 +25,14 @@ AT (0, 0, 0) ABSOLUTE
 /* Luego definimos la fuente */
 COMPONENT Source = Source_simple(
     radius = 0.1, dist = 10, xwidth = 0.1, yheight = 0.1, E0 = 5, dE =1,
-    focus_xw=.1, focus_yh=.1
+    focus_xw=.1, focus_yh=.1, gauss = 1
 )
 AT (0, 0, 0) RELATIVE Origin
 
 /* Agregamos monitor */
 COMPONENT Emon = E_monitor(
     filename = "Emon.dat", xmin = -0.1, xmax = 0.1, ymin = -0.1,
-    ymax = 0.1, Emin = 0, Emax = 10
+    ymax = 0.1, Emin = 0, Emax = 10, nE = 30
 )
 AT (0, 0, DIST) RELATIVE Origin
 
